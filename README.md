@@ -16,6 +16,23 @@ For each label, we choose top-k hard examples based on losses scores.
 
 For each label, we choose top-k hard examples based on gradient norm scores.
 
+#### Code
+
 The code can be view in the folder.
 
-While the data can be download in https://drive.google.com/drive/folders/12ThBP3NocuCgehskljItrwXVyk_EfwED?usp=share_link.
+While the data can be download in https://drive.google.com/drive/folders/12ThBP3NocuCgehskljItrwXVyk_EfwED?usp=share_link. （As the test data for ImageNet take up too much space, we only included train data for ImageNet）
+
+#### Citation
+
+Consider citing our paper:
+
+```latex
+@inproceedings{???,
+  title     = {???},
+  author    = {???},
+  booktitle = {???},
+  year      = {???},
+  url       = {???}
+}
+```
+
