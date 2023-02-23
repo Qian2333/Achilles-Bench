@@ -2,7 +2,7 @@
 
 Paper: 
 
-LeaderBoard:
+LeaderBoard:[Hard-Bench (qian2333.github.io)](https://qian2333.github.io/Hard-Bench-Web/)
 
 ### Main idea:
 
@@ -18,4 +18,4 @@ For each label, we choose top-k hard examples based on gradient norm scores.
 
 The code can be view in the folder.
 
-While the data can be download in .
+While the data can be download in https://drive.google.com/drive/folders/12ThBP3NocuCgehskljItrwXVyk_EfwED?usp=share_link.
