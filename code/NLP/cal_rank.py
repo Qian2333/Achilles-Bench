@@ -1,5 +1,4 @@
 # _*_ coding:utf-8 _*_
-# 利用深度学习做情感分析，基于Imdb 的50000个电影评论数据进行；
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -27,10 +26,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', default='sst2', type=str,
                         help='the datasets')
+    parser.add_argument('-md', '--mode', default='grad', type=str,
+                        help='the datasets')
     parser.add_argument('-tr', '--attacked_model', default='bert', type=str,
                         help='the datasets')
-    parser.add_argument('-r', '--rate', default=0.25, type=float,
-                        help='the rate of sample parameters')
     parser.add_argument('-t', '--train', default='t', type=str,
                         help='train before sample')
     parser.add_argument('-sd', '--seed', default=1, type=int,
@@ -58,7 +57,7 @@ def main():
     #                                            batch_size=batchsize, shuffle=False)
     # print(trainDatas[0:2])
     # exit(0)
-    print('training...(约1 hour(CPU))')
+    print('training...')
     criterion = nn.MSELoss() if args.s == 'stsb' else nn.CrossEntropyLoss()
 
     if args.s in DOUBLE_SENTENCES_SET:
@@ -85,17 +84,20 @@ def main():
     train_str = '_train' if args.train == 't' else ''
     # rate_str = str(args.rate).split('.')
     # rate_str = rate_str[0] + rate_str[1]
-    file_tr = 'logs/record1/gd_' + args.s + train_str + '_loss_' + args.attacked_model + '.txt'
-    optimizer = optim.SGD(net.parameters(), lr=1e-5)  # 首先定义优化器，这里用的AdamW，lr是学习率，因为bert用的就是这个
+    file_head = 'gd' if args.mode == 'grad' else 'ls'
+    file_tr = 'logs/record1/' + file_head + '_' + args.s + train_str + '_loss_' + args.attacked_model + '.txt'
+    optimizer = optim.SGD(net.parameters(), lr=1e-5)  # 
 
-    tot_para = cal_para(net)
     bg = time.time()
     for i, (inputs, labels) in enumerate(train_loader):
         labels = labels.cuda()
         if args.s == 'stsb':
             labels = labels.to(torch.float32)
         outputs = net(inputs)
-        tr = get_gradient_tr(net, optimizer, criterion(outputs, labels), tot=tot_para, rate=args.rate)
+        if args.mode == 'loss':
+            tr = criterion(outputs, labels)
+        elif args.mode == 'grad':
+            tr = get_gradient_norm(net, optimizer, criterion(outputs, labels))
         f2 = open(file_tr, 'a')
         f2.write(str(i + begin_index) + ' ' + str(float(tr)) + '\n')
         f2.close()
@@ -109,93 +111,6 @@ if __name__ == '__main__':
 
 
 """
-
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -ts 3 -id 0 -tr gpt2 > ntk_gpt_sst0.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -ts 3 -id 1 -tr gpt2 > ntk_gpt_sst1.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -ts 3 -id 2 -tr gpt2 > ntk_gpt_sst2.log 2>&1 &
-
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -ts 3 -id 0 -tr transfomer > ntk_tf_sst0.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -ts 3 -id 1 -tr transfomer > ntk_tf_sst1.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -ts 3 -id 2 -tr transfomer > ntk_tf_sst2.log 2>&1 &
-
-
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s mrpc -r 0.1 > ntk_cal_mrpc1.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s mrpc -r 0.5 > ntk_cal_mrpc5.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s mrpc -r 1 > ntk_cal_mrpc10.log 2>&1 &
-
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s rte -r 0.1 > ntk_cal_rte1.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s rte -r 0.5 > ntk_cal_rte5.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s rte -r 1 > ntk_cal_rte10.log 2>&1 &
-
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -r 0.1 > ntk_cal_sst1.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -r 0.5 > ntk_cal_sst5.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -r 1 > ntk_cal_sst10.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mrpc -r 0.1 > ntk_cal_mrpc1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mrpc -r 0.5 > ntk_cal_mrpc5.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mrpc -r 1 > ntk_cal_mrpc10.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s rte -r 0.1 > ntk_cal_rte1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s rte -r 0.5 > ntk_cal_rte5.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s rte -r 1 > ntk_cal_rte10.log 2>&1 &
-
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 > ntk_cal_sst1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 > ntk_cal_sst5.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 > ntk_cal_sst10.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s wnli -ts 3 -id 0 > ntk_cal_wnli0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s wnli -ts 3 -id 1 > ntk_cal_wnli1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s wnli -ts 3 -id 2 > ntk_cal_wnli2.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s rte -ts 3 -id 0 > ntk_cal_rte0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s rte -ts 3 -id 1 > ntk_cal_rte1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s rte -ts 3 -id 2 > ntk_cal_rte2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mrpc -ts 3 -id 0 > ntk_cal_mrpc0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mrpc -ts 3 -id 1 > ntk_cal_mrpc1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mrpc -ts 3 -id 2 > ntk_cal_mrpc2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -ts 3 -id 0 > ntk_cal_sst0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -ts 3 -id 1 > ntk_cal_sst1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s sst2 -ts 3 -id 2 > ntk_cal_sst2.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s cola -ts 3 -id 0 > ntk_cal_cola0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s cola -ts 3 -id 1 > ntk_cal_cola1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s cola -ts 3 -id 2 > ntk_cal_cola2.log 2>&1 &
-
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s cola -ts 3 -id 0 -t no > ntk_cal_cola0.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s cola -ts 3 -id 1 -t no > ntk_cal_cola1.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s cola -ts 3 -id 2 -t no > ntk_cal_cola2.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qnli -ts 5 -id 0 > ntk_cal_qnli0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qnli -ts 5 -id 1 > ntk_cal_qnli1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qnli -ts 5 -id 2 > ntk_cal_qnli2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qnli -ts 5 -id 3 > ntk_cal_qnli3.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qnli -ts 5 -id 4 > ntk_cal_qnli4.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mnli -ts 5 -id 1 > ntk_cal_mnli1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mnli -ts 5 -id 2 > ntk_cal_mnli2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mnli -ts 5 -id 3 > ntk_cal_mnli3.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mnli -ts 5 -id 0 > ntk_cal_mnli0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s mnli -ts 5 -id 4 > ntk_cal_mnli4.log 2>&1 &
-
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 0 > ntk_cal_qqp0.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 1 > ntk_cal_qqp1.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 2 > ntk_cal_qqp2.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 3 > ntk_cal_qqp3.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 4 > ntk_cal_qqp4.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 0 > ntk_cal_qqp0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 1 > ntk_cal_qqp1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 2 > ntk_cal_qqp2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 3 > ntk_cal_qqp3.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s qqp -ts 5 -id 4 > ntk_cal_qqp4.log 2>&1 &
-
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s stsb -ts 5 -id 0 > ntk_cal_stsb0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s stsb -ts 5 -id 1 > ntk_cal_stsb1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s stsb -ts 5 -id 2 > ntk_cal_stsb2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s stsb -ts 5 -id 3 > ntk_cal_stsb3.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank.py -s stsb -ts 5 -id 4 > ntk_cal_stsb4.log 2>&1 &
-
 
 
 """

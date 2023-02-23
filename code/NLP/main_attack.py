@@ -219,7 +219,7 @@ def main():
     parser.add_argument('-b', default=500, type=int,
                         help="the size of a single label data in selected dataset")
     parser.add_argument('-r', '--test_round', default=5, type=int, help="the round of test")
-    parser.add_argument('-rev', '--reverse', default=1, type=int, help='select l to l+b \'s data')
+    parser.add_argument('-rev', '--reverse', default=1, type=int, help='highest or lowest')
     parser.add_argument('-md', '--attacked_model', default='bert-base-uncased',
                         type=str, help='the model used to test')
     parser.add_argument('-tr', '--attacking_model', default='sst2_bert_gd_t',

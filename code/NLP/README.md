@@ -16,8 +16,6 @@ All the code default to use gpu. You need to check the code if you run the code 
 
 you can change dataset by ``-s mnli`` for MNLI and so on (In lower case). 
 
-Of course, you need to download ImageNet youself and set the path in the function ``DataIO.read_train_dev_test``  in  ``lib/dataset/get_data.py``. If the format you download is not compatible with ours, you may need to modify the data reading function yourself.
-
 the table shows the models can be test with
 
 | Model       | -md               |
@@ -53,4 +51,28 @@ the list show the rank for different datasets calculated by different model
 | qnli_ls_bert_t| Hard-Bench (Loss) rank for QNLI  calculated by trained BERT |
 
 You can calculate the rank with cal_rank.py youself.
+
+The arguments for ``main_attack.py``
+
+|      |                   | description                                                  |
+| ---- | ----------------- | ------------------------------------------------------------ |
+| -s   | --dataset         | Choose the datasets you want to test with                    |
+| -m   | --mode            | mode of Random-Bench or Hard-Bench                           |
+| -b   |                   | set the k for selecting k-shot sets                          |
+| -r   | --test_round      | the round of test                                            |
+| -rev | --reverse         | choose the highest rank data point or lowest(while rev=1 for hightest, 0 for lowest) |
+| -md  | --attacked_model  | the model used to test                                       |
+| -tr  | --attacking_model | the rank list you want to choose                             |
+
+The arguments for ``cal_rank.py``
+
+|      |                  | description                                                  |
+| ---- | ---------------- | ------------------------------------------------------------ |
+| -s   | --dataset        | Choose the datasets you want to test with                    |
+| -ts  | --num_split      | you can div the whole dataset into num_split and cal together for acceleration |
+| -t   | --train          | train the model before calculate or not                      |
+| -id  | --block_id       | the id of the block of datasets split into num_split sets    |
+| -sd  | --seed           | choose the random seed                                       |
+| -tr  | --attacked_model | the model used to test                                       |
+| -md  | --mode           | gd for Hard-Bench(GradNorm), ls for Hard-Bench(Loss)         |
 

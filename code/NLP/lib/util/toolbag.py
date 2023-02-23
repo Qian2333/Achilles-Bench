@@ -125,20 +125,13 @@ class Item:
         self.value = value
 
 
-def get_gradient_tr(net: torch.nn.Module, opt, y, tot=0, rate=1, args=None):
+def get_gradient_tr(net: torch.nn.Module, opt, y, args=None):
     import copy
     opt.zero_grad()
     # y.backward(retain_graph=True)
     y.backward()
     params = list(net.parameters())
     cou, ctt = 0, 1
-    if tot == 0:
-        for par in params:
-            if par.grad is None:
-                continue
-            tmp = copy.deepcopy(par.grad.view(-1))
-            # ans[cou:(cou + int(tmp.shape[0] * rate))] = tmp[:int(tmp.shape[0] * rate)]
-            tot += int(tmp.shape[0] * rate)
     ans = torch.tensor(0.).cuda()
     # print(tot)
     # exit(0)

@@ -69,7 +69,7 @@ def main():
         test_loader = test_data.train_loader(batch=256, shuffle=False)
     if args.model == 'ViT':
         test_loader = test_data.train_loader(batch=32)
-    print('training...(约1 hour(CPU))')
+    print('training...')
 
     net = get_model(args.model, dataset=args.s)
     if args.device == 'gpu':
@@ -168,92 +168,6 @@ if __name__ == '__main__':
 
 
 """
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u cal_rank_ave.py -s mrpc -ts 3 -id 2 > ntk_cal_mrpc2.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u cal_rank_ave.py -s sst2 -ts 3 -id 0 > ntk_cal_sst0.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m vgg16 -ts 5 -id 0 > nls_cal_cifar10_vgg0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m vgg16 -ts 5 -id 1 > nls_cal_cifar10_vgg1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m vgg16 -ts 5 -id 2 > nls_cal_cifar10_vgg2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m vgg16 -ts 5 -id 3 > nls_cal_cifar10_vgg3.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m vgg16 -ts 5 -id 4 > nls_cal_cifar10_vgg4.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 0 > nls_cal_cifar10_ffn0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 1 > nls_cal_cifar10_ffn1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 2 > nls_cal_cifar10_ffn2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 3 > nls_cal_cifar10_ffn3.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 4 > nls_cal_cifar10_ffn4.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m resnext -ts 5 -id 0 > nls_cal_cifar10_resnext0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m resnext -ts 5 -id 1 > nls_cal_cifar10_resnext1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m resnext -ts 5 -id 2 > nls_cal_cifar10_resnext2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m resnext -ts 5 -id 3 > nls_cal_cifar10_resnext3.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m resnext -ts 5 -id 4 > nls_cal_cifar10_resnext4.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 0 > nls_cal_cifar10_ffn0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 1 > nls_cal_cifar10_ffn1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 2 > nls_cal_cifar10_ffn2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 3 > nls_cal_cifar10_ffn3.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -m ffn -ts 5 -id 4 > nls_cal_cifar10_ffn4.log 2>&1 &
-
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 0 > nls_cal_cifar100_ffn0.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 1 > nls_cal_cifar100_ffn1.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 2 > nls_cal_cifar100_ffn2.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 3 > nls_cal_cifar100_ffn3.log 2>&1 &
-srun -p NLP --quotatype=spot --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 4 > nls_cal_cifar100_ffn4.log 2>&1 &
-
-srun -p NLP --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 0 > nls_cal_cifar100_ffn0.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 1 > nls_cal_cifar100_ffn1.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 2 > nls_cal_cifar100_ffn2.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 3 > nls_cal_cifar100_ffn3.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 4 > nls_cal_cifar100_ffn4.log 2>&1 &
-
-srun -p NLP --gres=gpu:1--cpus-per-task=16  -N1 python -u get_rank.py -s cifar100 -s imagenet -m ffn -ts 1 > nls_cal_img_ffn0.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 1 > nls_cal_cifar100_ffn1.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 2 > nls_cal_cifar100_ffn2.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 3 > nls_cal_cifar100_ffn3.log 2>&1 &
-srun -p NLP --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -m ffn -ts 5 -id 4 > nls_cal_cifar100_ffn4.log 2>&1 &
-
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m resnet18 -ts 5 -id 0 > nls_cal_cifar10_res0.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m resnet18 -ts 5 -id 1 > nls_cal_cifar10_res1.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m resnet18 -ts 5 -id 2 > nls_cal_cifar10_res2.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m resnet18 -ts 5 -id 3 > nls_cal_cifar10_res3.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m resnet18 -ts 5 -id 4 > nls_cal_cifar10_res4.log 2>&1 &
-
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m ViT -ts 5 -id 0 > nls_cal_cifar10_vit0.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m ViT -ts 5 -id 1 > nls_cal_cifar10_vit1.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m ViT -ts 5 -id 2 > nls_cal_cifar10_vit2.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m ViT -ts 5 -id 3 > nls_cal_cifar10_vit3.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -m ViT -ts 5 -id 4 > nls_cal_cifar10_vit4.log 2>&1 &
-
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ffn -ts 5 -id 0 > nls_cal_cifar10_ffn0.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ffn -ts 5 -id 1 > nls_cal_cifar10_ffn1.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ffn -ts 5 -id 2 > nls_cal_cifar10_ffn2.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ffn -ts 5 -id 3 > nls_cal_cifar10_ffn3.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ffn -ts 5 -id 4 > nls_cal_cifar10_ffn4.log 2>&1 &
-
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ViT -ts 5 -id 0 > nls_cal_cifar10_ffn0.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ViT -ts 5 -id 1 > nls_cal_cifar10_ffn1.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ViT -ts 5 -id 2 > nls_cal_cifar10_ffn2.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ViT -ts 5 -id 3 > nls_cal_cifar10_ffn3.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m ViT -ts 5 -id 4 > nls_cal_cifar10_ffn4.log 2>&1 &
-
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m resnet18 -ts 5 -id 0 > nls_cal_cifar10_ffn0.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m resnet18 -ts 5 -id 1 > nls_cal_cifar10_ffn1.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m resnet18 -ts 5 -id 2 > nls_cal_cifar10_ffn2.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m resnet18 -ts 5 -id 3 > nls_cal_cifar10_ffn3.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -m resnet18 -ts 5 -id 4 > nls_cal_cifar10_ffn4.log 2>&1 &
-
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -s cifar100 -m ffn -ts 5 -id 0 > nls_cal_cifar100_ffn0.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -s cifar100 -m ffn -ts 5 -id 1 > nls_cal_cifar100_ffn1.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -s cifar100 -m ffn -ts 5 -id 2 > nls_cal_cifar100_ffn2.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -s cifar100 -m ffn -ts 5 -id 3 > nls_cal_cifar100_ffn3.log 2>&1 &
-srun -p NLP --quotatype=auto --gres=gpu:1 -N1 python -u get_rank.py -md loss -s cifar100 -m ffn -ts 5 -id 4 > nls_cal_cifar100_ffn4.log 2>&1 &
-
-
-
-srun -p NLP --quotatype=spot --cpus-per-task=16 --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -s imagenet
-srun -p NLP --quotatype=auto --cpus-per-task=24 --gres=gpu:1 -N1 python -u get_rank.py -s cifar100 -s imagenet -md loss
 
 
 

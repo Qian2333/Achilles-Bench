@@ -44,3 +44,32 @@ the list show the rank for different datasets calculated by different model
 
 You can calculate the rank with get_rank.py youself.
 
+The arguments for ``main_attack.py``
+
+|      |                   | description                                                  |
+| ---- | ----------------- | ------------------------------------------------------------ |
+| -s   | --dataset         | Choose the datasets you want to test with                    |
+| -m   | --mode            | mode of Random-Bench or Hard-Bench                           |
+| -b   |                   | set the k for selecting k-shot sets                          |
+| -r   | --test_round      | the round of test                                            |
+| -rev | --reverse         | choose the highest rank data point or lowest(while rev=1 for hightest, 0 for lowest) |
+| -md  | --attacked_model  | the model used to test                                       |
+| -tr  | --attacking_model | the rank list you want to choose                             |
+| -d   | --device          | use gpu or cpu                                               |
+| -ts  | --training_set    | you can use data augment: cutmix or mixup                    |
+| -sd  | --seed_begin      | the rounds will be seeded with seed_begin+[0, 1, 2, ..., test_round - 1] |
+
+The arguments for ``get_rank.py``
+
+|      |                  | description                                                  |
+| ---- | ---------------- | ------------------------------------------------------------ |
+| -s   | --dataset        | Choose the datasets you want to test with                    |
+| -ts  | --num_split      | you can div the whole dataset into num_split and cal together for acceleration |
+| -t   | --train          | train the model before calculate or not                      |
+| -id  | --block_id       | the id of the block of datasets split into num_split sets    |
+| -sd  | --seed           | choose the random seed                                       |
+| -tr  | --attacked_model | the model used to test                                       |
+| -en  | --epoch_num      | epoch for training                                           |
+| -d   | --device         | gpu or cpu                                                   |
+| -md  | --mode           | gd for Hard-Bench(GradNorm), ls for Hard-Bench(Loss)         |
+
