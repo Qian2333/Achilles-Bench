@@ -1,6 +1,6 @@
 # A Challenging Benchmark for Low-Resource Learning
 
-Paper: 
+Paper: [[2303.03840\] A Challenging Benchmark for Low-Resource Learning (arxiv.org)](https://arxiv.org/abs/2303.03840)
 
 LeaderBoard:[Hard-Bench (qian2333.github.io)](https://qian2333.github.io/Hard-Bench-Web/)
 
@@ -29,12 +29,16 @@ While the data can be download in https://drive.google.com/drive/folders/12ThBP3
 Consider citing our paper:
 
 ```latex
-@inproceedings{???,
-  title     = {???},
-  author    = {???},
-  booktitle = {???},
-  year      = {???},
-  url       = {???}
+ @misc{https://doi.org/10.48550/arxiv.2303.03840,
+ doi = {10.48550/ARXIV.2303.03840},
+ url = {https://arxiv.org/abs/2303.03840},
+ author = {Wang, Yudong and Ma, Chang and Dong, Qingxiu and Kong, Lingpeng and Xu, Jingjing},
+ keywords = {Computation and Language (cs.CL), Artificial Intelligence (cs.AI), FOS: Computer and information sciences, FOS: Computer and information sciences},
+ title = {A Challenging Benchmark for Low-Resource Learning},
+ publisher = {arXiv},
+ year = {2023},
+ copyright = {Creative Commons Attribution 4.0 International}
 }
+
 ```
 
