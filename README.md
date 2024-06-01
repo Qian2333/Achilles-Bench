@@ -1,8 +1,8 @@
-# A Challenging Benchmark for Low-Resource Learning
+# Achilles-Bench: A Challenging Benchmark for Low-Resource Evaluation
 
 Paper: [[2303.03840\] A Challenging Benchmark for Low-Resource Learning (arxiv.org)](https://arxiv.org/abs/2303.03840)
 
-LeaderBoard:[Hard-Bench (qian2333.github.io)](https://qian2333.github.io/Hard-Bench-Web/)
+LeaderBoard:[Achilles-Bench (qian2333.github.io)](https://qian2333.github.io/Hard-Bench-Web/)
 
 the samulation code:https://colab.research.google.com/drive/1pywuN8W741kOEEDGqUJXf_dCKhLqar7d?usp=sharing
 
@@ -10,11 +10,11 @@ the samulation code:https://colab.research.google.com/drive/1pywuN8W741kOEEDGqUJ
 
 With promising yet saturated results in high-resource settings, low-resource datasets have gradually become popular benchmarks for evaluating the learning ability of advanced neural networks (e.g., BigBench, superGLUE). Some models even surpass humans according to benchmark test results. 
 
-#### Hard-Bench (Loss)
+#### Achilles-Bench (Loss)
 
 For each label, we choose top-k hard examples based on losses scores.
 
-#### Hard-Bench (GradNorm)
+#### Achilles-Bench (GradNorm)
 
 For each label, we choose top-k hard examples based on gradient norm scores.
 
